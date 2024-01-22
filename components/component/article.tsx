@@ -22,6 +22,7 @@ export default function Article({ nom, description, url }: ArticleProps) {
         <Link
           className="text-indigo-600 hover:text-indigo-500 flex items-center"
           href={url}
+          target="_blank"
         >
           Lien vers article{" "}
           <small className="pl-2">
