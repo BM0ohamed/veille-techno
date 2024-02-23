@@ -25,7 +25,7 @@ export default async function handler(
 
 			// Extract links to each blog
 			$('a.flex.rounded-xl.border-gray-100').each((_idx, element) => {
-				if (blogs.length < 5) {
+				if (blogLinks.length < 5) {
 					const link = "https://huggingface.co" + $(element).attr('href') || '';
 					blogLinks.push(link);
 				}
@@ -44,7 +44,7 @@ export default async function handler(
 				});
 
 				// Summarize paragraphs
-				const summary = await summarize(paragraphs.join('\n'));
+				const summary = paragraphs.join('\n').slice(0,100) + "...";
 
 				blogs.push({
 					title: $blog('h1').text().trim(),
@@ -68,7 +68,7 @@ export default async function handler(
 // Function to summarize content
 async function summarize(text: string): Promise<string> {
 	try {
-		const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
+		const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-12-6');
 		const output = await generator(text, {
 			max_new_tokens: 100,
 		});
@@ -76,6 +76,6 @@ async function summarize(text: string): Promise<string> {
 		return output[0]?.summary_text || '';
 	} catch (error) {
 		console.error('Error summarizing text:', error);
-		return ''; // Return an empty string if there's an error
+		return '';
 	}
 }
