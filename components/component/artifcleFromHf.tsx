@@ -9,6 +9,8 @@ type ArtifcleFromHfProps = {}
 
 const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 	const [data, setData] = useState<HfBlog[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
 	useEffect(() => {
 		fetch('/api/HuggingFaceBlogScraper')
 			.then((res) => res.json())
@@ -17,17 +19,18 @@ const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 			})
 			.catch((error) => {
 				console.error('Error fetching blogs:', error);
-			});
+			})
+			.then(() => setIsLoading(false));
 	}, []);
 
 
 	return (
 		<>
-			{data.map(blog => (
+			{!isLoading && data.map(blog => (
 				<Article
 					key={`hf-blog-${blog.title}`}
 					nom={`${blog.title.length > 40 ? blog.title.substring(0, 50) + '...' : blog.title}`}
-					description={blog.title.length.toString()}
+					description={blog.summary}
 					url={blog.link}
 				/>
 			))}
