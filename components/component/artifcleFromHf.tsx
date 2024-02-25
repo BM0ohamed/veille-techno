@@ -27,7 +27,7 @@ const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 				<Article
 					key={`hf-blog-${blog.title}`}
 					nom={`${blog.title.length > 40 ? blog.title.substring(0, 50) + '...' : blog.title}`}
-					description={blog.title.length.toString()}
+					description={blog.summary || ''}
 					url={blog.link}
 				/>
 			))}
