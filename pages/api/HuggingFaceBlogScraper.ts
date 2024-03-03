@@ -147,18 +147,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		res.status(405).end(`Method ${req.method} Not Allowed`);
 	}
 }
-
-// Function to summarize content
-async function summarize(text: string): Promise<string> {
-	try {
-		const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-12-6');
-		const output = await generator(text, {
-			max_new_tokens: 100,
-		});
-		// @ts-ignore
-		return output[0]?.summary_text || '';
-	} catch (error) {
-		console.error('Error summarizing text:', error);
-		return '';
-	}
-}
