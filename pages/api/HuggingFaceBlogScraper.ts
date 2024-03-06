@@ -1,11 +1,10 @@
 import fs from 'fs';
 import { promisify } from 'util';
 import { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
-import cheerio from 'cheerio';
-import { pipeline } from '@xenova/transformers';
+import path from "path";
 
-const writeFileAsync = promisify(fs.writeFile);
+const CSV_FILE_PATH = path.join(process.cwd(),  'dataset', 'articles_cache.csv');
+
 const readFileAsync = promisify(fs.readFile);
 
 export interface HfBlog {
@@ -16,9 +15,9 @@ export interface HfBlog {
 
 }
 
-export async function readCache(): Promise<HfBlog[]> {
+async function readCache(): Promise<HfBlog[]> {
 	try {
-		const data = await readFileAsync('articles_cache.csv', 'utf8');
+		const data = await readFileAsync(CSV_FILE_PATH, 'utf8');
 		const lines = data.trim().split('\n');
 		const cachedBlogs: HfBlog[] = lines.map(line => {
 			const [title, date, summary] = line.split(',').map(field => field.replace(/"/g, ''));
