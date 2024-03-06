@@ -1,9 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import path from "path";
+import { NextApiRequest, NextApiResponse } from "next";
 import { readCache } from "@/pages/api/service";
 
-const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_cache.csv');
-
+const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_openai_cache.csv');
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === 'GET') {
