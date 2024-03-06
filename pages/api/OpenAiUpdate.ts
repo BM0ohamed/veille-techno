@@ -28,7 +28,7 @@ async function getLatestBlogsFromOpenAiAndSave(): Promise<any> {
 			const blog$ = cheerio.load(blogHtml);
 
 			const title = blog$('h1.f-display-2').text().trim();
-			const date = blog$('span.f-meta-2').text().trim().replace(/,/g, ' ');
+			const date = blog$('span.f-meta-2').text().trim();
 
 			if (!cachedTitles.includes(title)) {
 				const paragraphs: string[] = [];

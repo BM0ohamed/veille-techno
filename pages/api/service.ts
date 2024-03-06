@@ -13,23 +13,33 @@ export interface Blog {
 	link: string,
 }
 
-export async function readCache(CSV_FILE_PATH: string): Promise<Blog[]> {
-	try {
-		const data = await readFileAsync(CSV_FILE_PATH, 'utf8');
-		const lines = data.trim().split('\n');
-		const cachedBlogs: Blog[] = lines.map(line => {
-			const [title, date, summary] = line.split(',').map(field => field.replace(/"/g, ''));
-			return {title, date, summary, link: ''}; // Assuming link is not stored in the cache
-		});
-		return cachedBlogs;
-	} catch (error) {
-		// If the cache file does not exist or there is a read error, return an empty array
-		return [];
-	}
+export async function readCache(path: string): Promise<Blog[]> {
+	const data = await readFileAsync(path, 'utf8');
+	const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+
+	// Map each row to a Blog object by splitting the row into fields using the '|' delimiter.
+	const blogs: Blog[] = rows.map(row => {
+		const fields = row.split('|').map(field => field.trim().replace(/^"|"$/g, ''));
+
+		// Map the fields to a Blog object.
+		const blog: Blog = {
+			title: fields[0],
+			date: fields[1],
+			summary: fields[2],
+			link: fields[3]
+		};
+
+		return blog;
+	});
+
+	return blogs;
 }
 
+
+
+
 export async function saveToCache(path: string, blogs: Blog[]): Promise<void> {
-	const csvContent = blogs.map(blog => `"${blog.title}","${blog.date}","${blog.summary}"`).join('\n');
+	const csvContent = blogs.map(blog => `"${blog.title}"|"${blog.date}"|"${blog.summary}"|"${blog.link}"`).join('\n');
 	try {
 		await writeFileAsync(path, csvContent, 'utf8');
 		console.log('Cache updated successfully.');
@@ -37,6 +47,7 @@ export async function saveToCache(path: string, blogs: Blog[]): Promise<void> {
 		console.error('Error updating cache:', error);
 	}
 }
+
 
 export async function summarize(text: string): Promise<string> {
 	try {

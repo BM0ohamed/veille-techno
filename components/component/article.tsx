@@ -19,7 +19,7 @@ export default function Article({ nom, description, url }: ArticleProps) {
         <p className="text-gray-500">{description}</p>
       </CardContent>
       <CardFooter>
-        <Link
+          <Link
           className="text-indigo-600 hover:text-indigo-500 flex items-center"
           href={url}
           target="_blank"

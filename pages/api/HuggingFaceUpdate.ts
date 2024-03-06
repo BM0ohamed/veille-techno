@@ -34,7 +34,10 @@ async function getLatestBlogsAndSave(): Promise<Blog[]> {
 
 			// Extract blog title and date
 			const title = $blog('h1').text().trim();
-			const date = $blog('time').attr('datetime') || '';
+			let date = $blog('div.mb-4.flex.items-center.gap-x-4.text-base span').text().trim() || '';
+			// Clean up the date string
+			date = date.replace(/^Published\s+|\s+$/g, ''); // Remove leading and trailing spaces
+			date = date.replace(/^(\w+\s+\d+,\s+\d+).*/g, '$1'); // Extract only the date part
 
 
 			if (!cachedTitles.includes(title)) {
