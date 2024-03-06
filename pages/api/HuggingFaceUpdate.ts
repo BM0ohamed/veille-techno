@@ -7,7 +7,7 @@ import { pipeline } from "@xenova/transformers";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
-const CSV_FILE_PATH = path.join(process.cwd(), 'app', 'dataset', 'articles_cache.csv');
+const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_cache.csv');
 
 const writeFileAsync = promisify(fs.writeFile);
 const readFileAsync = promisify(fs.readFile);
