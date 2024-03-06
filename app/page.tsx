@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import ArtifcleFromHf from "@/components/component/artifcleFromHf";
 
+//veille-techno.vercel.app/api/HuggingFaceUpdate
 export default function Home() {
 	return (
 		<main className="max-w-7xl mx-auto p-5 sm:px-6 lg:px-8">
