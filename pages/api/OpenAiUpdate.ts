@@ -1,51 +1,42 @@
+import path from "path";
+import { Blog, readCache, saveToCache, summarize } from "@/pages/api/service";
 import axios from "axios";
 import cheerio from "cheerio";
 import { NextApiRequest, NextApiResponse } from "next";
-import path from "path";
-import { Blog, readCache, saveToCache, summarize } from "@/pages/api/service";
 
-const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_cache.csv');
+const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_openai_cache.csv');
 
-
-async function getLatestBlogsAndSave(): Promise<Blog[]> {
+async function getLatestBlogsFromOpenAiAndSave(): Promise<any> {
 	try {
-		const response = await axios.get('https://huggingface.co/blog?tag=research');
+		const response = await axios.get('https://openai.com/blog')
 		const html = response.data;
 		const $ = cheerio.load(html);
 		const blogs: Blog[] = [];
-
-		const blogLinks: string[] = [];
-
-		// Extract links to each blog
-		$('a.flex.rounded-xl.border-gray-100').each((_idx, element) => {
-			if (blogLinks.length < 5) {
-				const link = "https://huggingface.co" + $(element).attr('href') || '';
-				blogLinks.push(link);
+		const links: string[] = [];
+		$('li[class*="mt-spacing"]').each((index, element) => {
+			if (links.length < 5) {
+				const link = "https://openai.com" + $(element).find('a').attr('href') || '';
+				links.push(link);
 			}
 		});
 		const cachedBlogs = await readCache(CSV_FILE_PATH);
 		const cachedTitles = cachedBlogs.map(blogs => blogs.title);
 
-		// Fetch content and extract basic information for each blog
-		for (const link of blogLinks) {
+		for (const link of links) {
 			const blogResponse = await axios.get(link);
-			const blogHtml = blogResponse.data;
-			const $blog = cheerio.load(blogHtml);
+			const blogHtml = blogResponse.data
+			const blog$ = cheerio.load(blogHtml);
 
-			// Extract blog title and date
-			const title = $blog('h1').text().trim();
-			const date = $blog('time').attr('datetime') || '';
-
+			const title = blog$('h1.f-display-2').text().trim();
+			const date = blog$('span.f-meta-2').text().trim().replace(/,/g, ' ');
 
 			if (!cachedTitles.includes(title)) {
-
 				const paragraphs: string[] = [];
-				$blog('p').each((_idx, element) => {
-					paragraphs.push($blog(element).text().trim());
+				blog$('p').each((index, element) => {
+					paragraphs.push(blog$(element).text().trim());
 				});
 				const content = paragraphs.join('\n');
 				const summary = await summarize(content);
-
 				blogs.push({
 					title,
 					date,
@@ -64,11 +55,10 @@ async function getLatestBlogsAndSave(): Promise<Blog[]> {
 	}
 }
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === 'GET') {
 		try {
-			const blogs = await getLatestBlogsAndSave();
+			const blogs = await getLatestBlogsFromOpenAiAndSave();
 			res.status(200).json(blogs);
 		} catch (error) {
 			console.error('Error in API handler:', error);
