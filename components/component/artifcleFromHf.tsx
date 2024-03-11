@@ -14,15 +14,18 @@ const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response1 = await fetch('/api/HuggingFaceBlogScraper');
-				const data1 = await response1.json();
+				const responseHf = await fetch('/api/HuggingFaceBlogScraper');
+				const dataFromHfCache = await responseHf.json();
 
 				// Fetch data from another API
-				const response2 = await fetch('/api/OpenAiBlogScraper');
-				const data2 = await response2.json();
+				const responseOpenAi = await fetch('/api/OpenAiBlogScraper');
+				const dataFromOpenAICache = await responseOpenAi.json();
+
+				const responseDL = await fetch('/api/deeplearningScraper');
+				const dataFromDl = await responseDL.json();
 
 				// Merge or concatenate the data from both APIs
-				const mergedData = [...data1, ...data2];
+				const mergedData = [...dataFromHfCache, ...dataFromOpenAICache, ...dataFromDl];
 
 				setData(mergedData);
 				setIsLoading(false);
