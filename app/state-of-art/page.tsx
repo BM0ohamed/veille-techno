@@ -9,7 +9,7 @@ export default function Home() {
             <div className="flex justify-between items-center border-b-2 border-gray-200 py-6 md:justify-start gap-2">
                 <Button><Link className="text-lg font-semibold" href="/">Retour à la page d&apos;accueil</Link></Button>
             </div>
-            <div>Etat de l'art </div>
+            <div>Etat de l&apos;art </div>
         </main>
     );
 };
