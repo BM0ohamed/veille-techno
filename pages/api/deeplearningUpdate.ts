@@ -38,8 +38,11 @@ async function getLatestBlogsAndSave(): Promise<any> {
 			const date = $blog('div.mt-1.text-slate-600.text-base.undefined > a > div').text().trim();
 			if (!cachedTitles.includes(title)) {
 				const paragraphs: string[] = [];
-				$blog('.prose--styled.justify-self-center.post_postContent__D_kc7 > p').each((_idx, element) => {
-					paragraphs.push($blog(element).text().trim());
+				$blog('*').each((index, element) => {
+					// @ts-ignore
+					if (element.tagName === 'p' || (element.tagName === 'li' && $blog(element).text().trim().length > 20)) {
+						paragraphs.push($blog(element).text().trim());
+					}
 				});
 				const content = paragraphs.join('\n');
 				const summary = await summarize(content);
@@ -47,7 +50,7 @@ async function getLatestBlogsAndSave(): Promise<any> {
 					title: title,
 					date: date,
 					link: link,
-					summary: content,
+					summary: summary,
 				});
 			}
 		}

@@ -7,6 +7,7 @@ import { Blog } from "@/pages/api/service";
 type ArtifcleFromHfProps = {}
 
 
+
 const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 	const [data, setData] = useState<Blog[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -25,8 +26,18 @@ const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 				const dataFromDl = await responseDL.json();
 
 				// Merge or concatenate the data from both APIs
-				const mergedData = [...dataFromHfCache, ...dataFromOpenAICache, ...dataFromDl];
-
+				let mergedData = [...dataFromHfCache, ...dataFromOpenAICache, ...dataFromDl].map(item => {
+					const dateStr = item.date;
+					let date;
+					if (dateStr.includes('Published')) {
+						const dateString = dateStr.replace('Published', '').trim();
+						date = new Date(dateString);
+					} else {
+						date = new Date(dateStr);
+					}
+					return {...item, parsedDate: date};
+				});
+				mergedData.sort((a, b) => b.parsedDate - a.parsedDate);
 				setData(mergedData);
 				setIsLoading(false);
 			} catch (error) {
@@ -47,6 +58,7 @@ const ArticleFromHf: React.FC<ArtifcleFromHfProps> = () => {
 					nom={`${blog.title.length > 40 ? blog.title.substring(0, 50) + '...' : blog.title}`}
 					description={blog.summary || ''}
 					url={blog.link}
+					date={blog.parsedDate}
 				/>
 
 			))}

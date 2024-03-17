@@ -3,14 +3,16 @@ import fs from "fs";
 import { pipeline } from "@xenova/transformers";
 
 
-const writeFileAsync = promisify(fs.writeFile);
 const readFileAsync = promisify(fs.readFile);
+const appendFileAsync = promisify(fs.appendFile);
+
 
 export interface Blog {
 	title: string,
 	date: string,
 	summary: string,
 	link: string,
+	parsedDate?: Date,
 }
 
 export async function readCache(path: string): Promise<Blog[]> {
@@ -36,12 +38,10 @@ export async function readCache(path: string): Promise<Blog[]> {
 }
 
 
-
-
 export async function saveToCache(path: string, blogs: Blog[]): Promise<void> {
 	const csvContent = blogs.map(blog => `"${blog.title}"|"${blog.date}"|"${blog.summary}"|"${blog.link}"`).join('\n');
 	try {
-		await writeFileAsync(path, csvContent, 'utf8');
+		await appendFileAsync(path, csvContent, 'utf8');
 		console.log('Cache updated successfully.');
 	} catch (error) {
 		console.error('Error updating cache:', error);
