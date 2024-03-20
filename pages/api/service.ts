@@ -38,7 +38,8 @@ export async function saveToCache(blogs: Blog[], blogKey: string): Promise<void>
 
 export async function summarize(text: string): Promise<string> {
 	try {
-		const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-12-6');
+		const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-12-6',
+			{cache_dir: '/tmp/xenova_cache'});
 		const output = await generator(text, {
 			max_new_tokens: 100,
 		});
