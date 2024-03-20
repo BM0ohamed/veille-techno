@@ -6,7 +6,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'deeplearning.csv');
+export const THE_BATCH_BLOG_KEY = "the_batch_blog_key";
 
 async function getLatestBlogsAndSave(): Promise<any> {
 	try {
@@ -24,7 +24,7 @@ async function getLatestBlogsAndSave(): Promise<any> {
 				blogLinks.push(link)
 			}
 		});
-		const cachedBlogs = await readCache(CSV_FILE_PATH);
+		const cachedBlogs = await readCache(THE_BATCH_BLOG_KEY);
 		const cachedTitles = cachedBlogs.map(blogs => blogs.title);
 
 
@@ -55,7 +55,7 @@ async function getLatestBlogsAndSave(): Promise<any> {
 			}
 		}
 		if (blogs.length > 0) {
-			await saveToCache(CSV_FILE_PATH, blogs);
+			await saveToCache(blogs, THE_BATCH_BLOG_KEY);
 		}
 
 		return blogs;

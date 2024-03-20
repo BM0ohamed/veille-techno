@@ -4,7 +4,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_openai_cache.csv');
+export const OPEN_AI_BLOG_KEY = "open_ai";
 
 async function getLatestBlogsFromOpenAiAndSave(): Promise<any> {
 	try {
@@ -19,7 +19,7 @@ async function getLatestBlogsFromOpenAiAndSave(): Promise<any> {
 				links.push(link);
 			}
 		});
-		const cachedBlogs = await readCache(CSV_FILE_PATH);
+		const cachedBlogs = await readCache(OPEN_AI_BLOG_KEY);
 		const cachedTitles = cachedBlogs.map(blogs => blogs.title);
 
 		for (const link of links) {
@@ -46,7 +46,7 @@ async function getLatestBlogsFromOpenAiAndSave(): Promise<any> {
 			}
 		}
 		if (blogs.length > 0) {
-			await saveToCache(CSV_FILE_PATH, blogs);
+			await saveToCache(blogs, OPEN_AI_BLOG_KEY);
 		}
 		return blogs;
 	} catch (error) {
