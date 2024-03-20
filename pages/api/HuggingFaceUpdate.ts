@@ -1,10 +1,9 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import { NextApiRequest, NextApiResponse } from "next";
-import path from "path";
 import { Blog, readCache, saveToCache, summarize } from "@/pages/api/service";
 
-const CSV_FILE_PATH = path.join(process.cwd(), 'dataset', 'articles_cache.csv');
+export const HF_BLOG_KEY = "hugging_face";
 
 
 async function getLatestBlogsAndSave(): Promise<Blog[]> {
@@ -23,7 +22,7 @@ async function getLatestBlogsAndSave(): Promise<Blog[]> {
 				blogLinks.push(link);
 			}
 		});
-		const cachedBlogs = await readCache(CSV_FILE_PATH);
+		const cachedBlogs = await readCache(HF_BLOG_KEY);
 		const cachedTitles = cachedBlogs.map(blogs => blogs.title);
 
 		// Fetch content and extract basic information for each blog
@@ -58,7 +57,7 @@ async function getLatestBlogsAndSave(): Promise<Blog[]> {
 			}
 		}
 		if (blogs.length > 0) {
-			await saveToCache(CSV_FILE_PATH, blogs);
+			await saveToCache(blogs, HF_BLOG_KEY);
 		}
 		return blogs;
 	} catch (error) {
